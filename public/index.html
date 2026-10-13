@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-mz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProgrameMoz - Aprender Programação</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Muli:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/ index.html" class="navbar-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+        <path d="M16 2L2 8h20L16 2ZM16 6L2 12h20L16 6ZM16 10L2 16h20L16 10ZM16 14L2 20h20L16 14Z"/>
+      </svg>
+      ProgrameMoz
+      </a>
+      <div class="navbar-links">
+        <a href="#linguagens" class="link">Linguagens</a>
+        <a href="#perguntas" class="link">Quizzes</a>
+        <a href="#progresso" class="link">Progresso</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">ProgrameMoz</h1>
+        <p class="hero-subtitle">Aprenda programação através de quizzes interativos</p>
+        <div class="hero-buttons">
+          <a href="/login.html" class="btn btn-primary">Entrar/Registar</a>
+          <a href="#linguagens" class="btn btn-secondary">Começar</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- Linguagens Section -->
+  <section class="linguagens" id="linguagens">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Escolha uma Linguagem</h2>
+        <p class="section-subtitle">Selecione a linguagem de programação que deseja praticar</p>
+      </div>
+      <div class="linguagens-grid">
+        <!-- Linguagens serão carregadas via JavaScript -->
+        <div class="linguagem-card loading" id="linguagem-card-template">
+          <div class="linguagem-icon"></div>
+          <h3 class="linguagem-nome"></h3>
+          <p class="linguagem-descricao"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quizz Section -->
+  <section class="quizz" id="perguntas">
+    <div class="container">
+      <div class="quizz-header">
+        <h2 class="quizz-title" id="quizz-titulo">Selecione uma linguagem para começar</h2>
+        <div class="quizz-progress" id="quizz-progress">
+          <div class="quizz-progress-bar" id="quizz-progress-bar" style="width: 0%"></div>
+        </div>
+      </div>
+      
+      <div class="quizz-card" id="quizz-card" style="display: none;">
+        <div class="quizz-question" id="quizz-pergunta"></div>
+        
+        <div class="quizz-opcoes" id="quizz-opcoes">
+          <!-- Opções serão inseridas via JavaScript -->
+        </div>
+        
+        <div class="quizz-navegation" id="quizz-navegation">
+          <button type="button" class="btn-nav" id="btn-anterior" disabled>Anterior</button>
+          <span class="nav-indicator" id="nav-indicator">1 de N</span>
+          <button type="button" class="btn-nav" id="btn-proxima">Próxima</button>
+        </div>
+      </div>
+
+      <div class="quizz-result" id="quizz-result" style="display: none;">
+        <div class="result-icon" id="result-icon"></div>
+        <h3 class="result-title" id="result-titulo"></h3>
+        <p class="result-explanation" id="result-explicacao"></p>
+        <p class="result-score" id="result-pontuacao"></p>
+        <button type="button" class="btn btn-primary" id="btn-reiniciar">Reiniciar Quizz</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progresso Section -->
+  <section class="progresso" id="progresso">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Histórico do seu Progresso</h2>
+        <p class="section-subtitle">Acompanhe o seu desempenho ao longo do tempo</p>
+      </div>
+      <div class="progresso-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Linguagem</th>
+              <th>Temas</th>
+              <tentativas></th>
+              <th>Acertos</th>
+              <th>Percentual</th>
+              <th>Última Tentativa</th>
+            </tr>
+          </thead>
+          <tbody id="progresso-body">
+            <!-- Dados serão carregados via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class.footer-content>
+        <div class="footer-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+            <path d="M16 2L2 8h20L16 2ZM16 6L2 12h20L16 6ZM16 10L2 16h20L16 10ZM16 14L2 20h20L16 14Z"/>
+          </svg>
+          ProgrameMoz
+        </div>
+        <p class="footer-text">Plataforma moçambicana de quizzes para aprendizagem de programação</p>
+        <p class="footer-text">Desenvolvido com ❤️ para estudantes universitários de Moçambique</p>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="link">Termos de Serviço</a>
+        <a href="#" class="link">Privacidade</a>
+        <a href="#" class="link">Contato</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>

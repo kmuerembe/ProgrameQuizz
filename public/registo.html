@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta | CódigoMZ - ProgrameMoz</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Muli:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+  <!-- Barra de Navegação -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/index.html" class="navbar-logo">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="currentColor">
+          <path d="M16 2L2 8h28L16 2ZM16 8L4 14h24L16 8ZM16 14L6 20h20L16 14ZM16 20L8 26h16L16 20Z"/>
+        </svg>
+        <span>CódigoMZ</span>
+        <span class="brand-badge">ProgrameMoz</span>
+      </a>
+      <div class="navbar-links">
+        <a href="/index.html">Painel Principal</a>
+        <a href="/index.html#linguagens">Linguagens</a>
+        <a href="/login.html">Iniciar Sessão</a>
+      </div>
+      <div class="navbar-auth">
+        <a href="/login.html" class="btn btn-secondary btn-sm">Entrar</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo Principal de Registo -->
+  <main class="auth-wrapper">
+    <div class="auth-container">
+      <!-- Painel Institucional CódigoMZ -->
+      <aside class="auth-aside">
+        <div>
+          <span class="auth-aside-badge">🇲🇿 Comunidade Académica de Moçambique</span>
+          <h2>Crie a sua conta gratuita no CódigoMZ</h2>
+          <p>
+            Junte-se a estudantes de Maputo, Beira, Nampula, Quelimane, Tete e de todo o país na aprendizagem prática de programação.
+          </p>
+          <ul class="auth-benefits">
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Guarde a sua pontuação e suba de nível em cada quizz concluído.</span>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Acompanhe o seu progresso detalhado por linguagem e tema.</span>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Dados protegidos com encriptação segura e histórico individual.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="auth-aside-footer">
+          CódigoMZ • A impulsionar o talento tecnológico moçambicano
+        </div>
+      </aside>
+
+      <!-- Formulário de Registo -->
+      <section class="auth-panel" aria-labelledby="registo-heading">
+        <div class="auth-header">
+          <h1 id="registo-heading">Registo de Novo Utilizador</h1>
+          <p>Preencha os seus dados abaixo para criar a sua conta no CódigoMZ.</p>
+        </div>
+
+        <!-- Alerta de Feedback (Erro / Sucesso) -->
+        <div id="registo-alert" class="auth-alert" role="alert" aria-live="polite"></div>
+
+        <form id="registo-form" novalidate>
+          <div class="form-group">
+            <label for="registo-nome" class="form-label">Nome Completo *</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="registo-nome"
+                name="nome_completo"
+                class="form-control"
+                placeholder="ex: Samora Machel Júnior"
+                autocomplete="name"
+                required
+              >
+            </div>
+            <span id="erro-registo-nome" class="field-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="registo-email" class="form-label">Endereço de E-mail *</label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="registo-email"
+                name="email"
+                class="form-control"
+                placeholder="ex: samora@estudante.uem.mz"
+                autocomplete="email"
+                required
+              >
+            </div>
+            <span id="erro-registo-email" class="field-error"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="registo-curso" class="form-label">Curso (Opcional)</label>
+              <input
+                type="text"
+                id="registo-curso"
+                name="curso"
+                class="form-control"
+                placeholder="ex: Engenharia Informática"
+              >
+              <span id="erro-registo-curso" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="registo-ano" class="form-label">Ano de Estudo (Opcional)</label>
+              <select id="registo-ano" name="ano_estudo" class="form-control">
+                <option value="">Selecione o ano...</option>
+                <option value="1">1.º Ano</option>
+                <option value="2">2.º Ano</option>
+                <option value="3">3.º Ano</option>
+                <option value="4">4.º Ano</option>
+                <option value="5">5.º Ano</option>
+              </select>
+              <span id="erro-registo-ano" class="field-error"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="registo-password" class="form-label">Palavra-passe *</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="registo-password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Mínimo de 6 caracteres"
+                  autocomplete="new-password"
+                  required
+                >
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-toggle-password="registo-password"
+                  aria-label="Mostrar ou ocultar palavra-passe"
+                >
+                  Mostrar
+                </button>
+              </div>
+              <div class="password-strength" aria-hidden="true">
+                <div class="strength-bar">
+                  <div id="strength-fill" class="strength-fill"></div>
+                </div>
+                <span id="strength-text" class="strength-text">Segurança da palavra-passe</span>
+              </div>
+              <span id="erro-registo-password" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="registo-confirmar" class="form-label">Confirmar Palavra-passe *</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="registo-confirmar"
+                  name="confirmar_password"
+                  class="form-control"
+                  placeholder="Repita a palavra-passe"
+                  autocomplete="new-password"
+                  required
+                >
+              </div>
+              <span id="erro-registo-confirmar" class="field-error"></span>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-registo" class="btn btn-primary btn-block">
+            Criar Conta no CódigoMZ
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Já possui uma conta registada?
+          <a href="/login.html">Iniciar sessão aqui</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+</body>
+</html>

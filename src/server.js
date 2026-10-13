@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * CódigoMZ / ProgrameMoz - Servidor Node.js com Express
+ * ProgrameMoz - Servidor Node.js com Express
  * Plataforma moçambicana de quizzes para aprendizagem de programação
  * ============================================================
  */
@@ -129,7 +129,7 @@ async function inicializarBaseDeDados() {
  */
 function calcularNivelUtilizador(pontuacao) {
   const pts = Number(pontuacao || 0);
-  if (pts >= 100) return 'Mestre CódigoMZ';
+  if (pts >= 100) return 'Mestre ProgrameMoz';
   if (pts >= 50) return 'Programador Avançado';
   if (pts >= 20) return 'Estudante Praticante';
   return 'Estudante Iniciante';
@@ -240,7 +240,7 @@ app.get('/', (req, res, next) => {
     return res.sendFile(path.join(__dirname, '../public/index.html'));
   }
   return res.json({
-    mensagem: 'Bem-vindo ao CódigoMZ / ProgrameMoz API',
+    mensagem: 'Bem-vindo à API ProgrameMoz',
     versão: '1.0.0',
     status: 'ativo',
   });
@@ -248,7 +248,7 @@ app.get('/', (req, res, next) => {
 
 app.get('/api/status', (req, res) => {
   res.json({
-    mensagem: 'Bem-vindo ao CódigoMZ / ProgrameMoz API',
+    mensagem: 'Bem-vindo à API ProgrameMoz',
     versão: '1.0.0',
     status: 'ativo',
   });
@@ -362,7 +362,7 @@ async function registarUtilizadorHandler(req, res) {
     definirCookieSessao(res, token);
 
     return res.status(201).json({
-      mensagem: 'Conta criada com sucesso! Bem-vindo ao CódigoMZ.',
+      mensagem: 'Conta criada com sucesso! Bem-vindo ao ProgrameMoz.',
       utilizador: {
         id: novoUtilizador.id,
         nome_completo: novoUtilizador.nome_completo,
@@ -717,7 +717,7 @@ const startServer = async () => {
     await inicializarBaseDeDados();
 
     app.listen(port, host, () => {
-      console.log(`🚀 Servidor CódigoMZ / ProgrameMoz a correr em http://${host}:${port}`);
+      console.log(`🚀 Servidor ProgrameMoz a correr em http://${host}:${port}`);
       console.log(`📚 Ambiente: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (err) {

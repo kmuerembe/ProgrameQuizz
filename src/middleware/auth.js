@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * CódigoMZ / ProgrameMoz - Middleware de Autenticação e Sessão
+ * ProgrameMoz - Middleware de Autenticação e Sessão
  * Gestão de tokens JWT, cookies HttpOnly seguros e controlo de acesso
  * ============================================================
  */

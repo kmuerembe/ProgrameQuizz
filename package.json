@@ -1,0 +1,40 @@
+{
+  "name": "programe-moz",
+  "version": "1.0.0",
+  "description": "ProgrameMoz - Plataforma moçambicana de quizzes para aprendizagem de programação",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --verbose"
+  },
+  "keywords": [
+    "moçambique",
+    "programação",
+    "quizz",
+    "educação",
+    "estudantes",
+    "javascript",
+    "node",
+    "express",
+    "postgresql"
+  ],
+  "author": "ProgrameMoz Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.0",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  }
+}

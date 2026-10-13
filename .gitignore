@@ -1,0 +1,31 @@
+# ProgrameMoz - GitIgnore
+# ----------------------
+# Dependências node_modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Database dump
+*.sql
+
+# Build artifacts
+dist/
+build/
+
+# IDE files
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+
+# Runtime cache
+*.pid
+*.seed
+
+# Environment sample (but not the actual file)
+!.env.example

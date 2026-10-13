@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8">
+  <!--
+    ProgrameMoz - Experiência de lição interactiva (estilo SoloLearn).
+    Mobile-first, sem recarregar página. Usa as rotas /api/temas e /api/perguntas
+    existentes. Etapa 1: explicação + escolha múltipla + feedback.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0297f3">
+  <title>Lição | ProgrameMoz</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/licao.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="licao-body">
+
+  <!-- Contentor principal: 100dvh, seguro para "notch" em mobile -->
+  <div class="licao-app" id="licao-app">
+
+    <!-- Topo fixo: X (sair), barra progresso, vidas -->
+    <header class="licao-topo" role="banner">
+      <button type="button" class="licao-btn-fechar" id="btn-sair" aria-label="Sair da lição">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="licao-progresso" aria-label="Progresso da lição">
+        <div class="licao-progresso-trilho" id="progresso-trilho">
+          <div class="licao-progresso-preenchimento" id="progresso-preenchimento" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="licao-vidas" aria-live="polite" aria-label="Vidas restantes">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="coracao">
+          <path d="M12 21s-7-4.35-9.5-9.2C.7 8.3 3 4.5 6.8 4.5c2 0 3.8 1.1 5.2 2.8 1.4-1.7 3.2-2.8 5.2-2.8 3.8 0 6.1 3.8 4.3 7.3C19 16.65 12 21 12 21z" fill="currentColor"/>
+        </svg>
+        <span id="contador-vidas">5</span>
+      </div>
+    </header>
+
+    <!-- Área central: cartões de explicação e perguntas -->
+    <main class="licao-palco" id="licao-palco">
+
+      <!-- Ecrã de carregamento -->
+      <section class="licao-ecra licao-loading" id="ecra-loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>A preparar a sua lição…</p>
+      </section>
+
+      <!-- Ecrã de erro -->
+      <section class="licao-ecra licao-erro" id="ecra-erro" hidden>
+        <h2>Ups, algo correu mal</h2>
+        <p id="erro-mensagem">Não foi possível carregar a lição.</p>
+        <button type="button" class="btn btn-primary" id="btn-tentar-novamente">Tentar novamente</button>
+        <a href="/index.html" class="btn btn-secondary">Voltar ao início</a>
+      </section>
+
+      <!-- Cartão de explicação -->
+      <section class="licao-ecra licao-explicacao" id="ecra-explicacao" hidden>
+        <h1 class="licao-titulo" id="explicacao-titulo">Título da explicação</h1>
+        <div class="licao-texto" id="explicacao-texto"></div>
+        <pre class="licao-codigo" id="explicacao-codigo" hidden><code></code></pre>
+        <div class="licao-espaco"></div>
+        <button type="button" class="btn btn-primary licao-btn-grande" id="btn-continuar-explicacao">
+          CONTINUAR
+        </button>
+        <p class="licao-dica-tecla" aria-hidden="true">Dica: prima <kbd>Enter</kbd> para continuar</p>
+      </section>
+
+      <!-- Cartão de pergunta (escolha múltipla) -->
+      <section class="licao-ecra licao-pergunta" id="ecra-pergunta" hidden>
+        <p class="licao-etiqueta" id="pergunta-etiqueta">Pergunta</p>
+        <h2 class="licao-pergunta-enunciado" id="pergunta-enunciado"></h2>
+        <pre class="licao-codigo" id="pergunta-codigo" hidden><code></code></pre>
+
+        <ul class="licao-opcoes" id="pergunta-opcoes" role="radiogroup" aria-label="Opções de resposta">
+          <!-- Opções inseridas via JS -->
+        </ul>
+
+        <div class="licao-espaco"></div>
+        <button type="button" class="btn btn-primary licao-btn-grande" id="btn-verificar" disabled aria-disabled="true">
+          VERIFICAR
+        </button>
+      </section>
+
+      <!-- Ecrã de confirmação ao sair -->
+      <section class="licao-ecra licao-sair" id="ecra-sair" hidden>
+        <div class="licao-dialogo">
+          <h2>Abandonar a lição?</h2>
+          <p>Se sair agora, perde o progresso desta sessão.</p>
+          <div class="licao-dialogo-acoes">
+            <button type="button" class="btn btn-secondary" id="btn-sair-cancelar">Continuar a lição</button>
+            <button type="button" class="btn btn-accent" id="btn-sair-confirmar">Sair mesmo assim</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Painel de feedback (desliza de baixo) -->
+    <div class="licao-feedback" id="painel-feedback" role="region" aria-live="polite" aria-label="Feedback da resposta" hidden>
+      <div class="licao-feedback-conteudo" id="feedback-conteudo">
+        <h3 id="feedback-titulo"></h3>
+        <p id="feedback-explicacao"></p>
+        <button type="button" class="btn licao-btn-grande" id="btn-continuar-depois">
+          CONTINUAR
+        </button>
+        <p class="licao-dica-tecla" aria-hidden="true">Prima <kbd>Enter</kbd> para continuar</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/licao.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * CódigoMZ / ProgrameMoz - Lógica Principal do Painel e Quizzes
+ * ProgrameMoz - Lógica Principal do Painel e Quizzes
  * ============================================================
  */
 
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Atualizar Hero
     if (elements.heroTitle) {
-      elements.heroTitle.textContent = `Olá, ${primeiroNome}! Bem-vindo ao seu Painel CódigoMZ`;
+      elements.heroTitle.textContent = `Olá, ${primeiroNome}! Bem-vindo ao seu Painel ProgrameMoz`;
     }
     if (elements.heroButtons) {
       elements.heroButtons.innerHTML = `
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.perfilCurso) {
       const infoCurso = perfil.curso
         ? `${perfil.curso}${perfil.ano_estudo ? ` (${perfil.ano_estudo}.º Ano)` : ''}`
-        : 'Estudante CódigoMZ';
+        : 'Estudante ProgrameMoz';
       elements.perfilCurso.textContent = infoCurso;
     }
     if (elements.perfilNivel) {
@@ -289,19 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.toggle('ligado', Number(card.dataset.id) === Number(linguagem.id));
     });
 
-    appState.selectedLanguageId = linguagem.id;
-    appState.currentLanguage = linguagem.nome_moçambique || linguagem.nome;
-
-    try {
-      const temasResponse = await fetch(`/api/temas/${linguagem.id}`);
-      if (!temasResponse.ok) throw new Error('Erro ao carregar temas');
-      const temas = await temasResponse.json();
-
-      if (temas.length === 0) return;
-      await carregarPerguntasPorTema(temas[0].id);
-    } catch (error) {
-      console.error('Erro ao carregar temas:', error);
-    }
+    // Abre a nova experiência de lição interativa (ProgrameMoz)
+    window.location.href = `/licao.html?linguagem=${encodeURIComponent(linguagem.id)}`;
   }
 
   async function carregarPerguntasPorTema(temaId) {

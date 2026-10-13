@@ -1,5 +1,5 @@
 -- ============================================================
--- CódigoMZ / ProgrameMoz - Esquema da Base de Dados PostgreSQL
+-- ProgrameMoz - Esquema da Base de Dados PostgreSQL
 -- Nota: Utiliza CREATE TABLE IF NOT EXISTS e ALTER TABLE ... ADD COLUMN IF NOT EXISTS
 -- para preservar todas as tabelas e dados existentes sem duplicação.
 -- ============================================================

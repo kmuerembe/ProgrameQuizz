@@ -1,32 +1,50 @@
 /* ============================================================
- * CódigoMZ / ProgrameMoz - Folha de Estilos Principal
- * Identidade visual moçambicana, moderna, acessível e responsiva
+ * ProgrameMoz - Folha de Estilos Principal
+ * Identidade visual moderna, acessível, responsiva (mobile first)
  * ============================================================ */
 
-/* Variáveis CSS */
+/* Variáveis CSS - nova identidade ProgrameMoz */
 :root {
-  --primary-color: #2D5A27;       /* Verde Moçambique */
-  --primary-dark: #1E3F1A;
-  --primary-light: #4A7C3F;
-  --primary-soft: #E9F2E8;
-  --secondary-color: #FF6B35;     /* Laranja vibrante */
-  --secondary-hover: #E85A25;
-  --accent-gold: #F4B400;         /* Amarelo/Dourado */
-  --text-dark: #2D3436;
-  --text-light: #636E72;
-  --background: #F5F7FA;
-  --white: #FFFFFF;
-  --border: #DFE6E9;
-  --success: #28A745;
-  --success-bg: #E8F5E9;
-  --error: #DC3545;
-  --error-bg: #FDECEA;
-  --warning: #F39C12;
-  --border-radius: 10px;
-  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.07);
-  --shadow-md: 0 8px 24px rgba(45, 90, 39, 0.12);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.14);
-  --transition: 0.25s ease;
+  /* Cores principais */
+  --azul: #0297f3;
+  --azul-escuro: #0178c4;
+  --verde: #3ea70c;
+  --verde-escuro: #2d7e09;
+  --vermelho-coracao: #f20057;
+  --vermelho-escuro: #c10046;
+  --laranja: #ffa310;
+  --laranja-escuro: #d98700;
+  --fundo: #efeef3;
+  --cartao: #ffffff;
+  --texto: #2c3846;
+  --texto-suave: #6b7280;
+  --bloco-codigo: #2c3846;
+  --cinza-bloqueado: #b8b8c2;
+
+  /* Aliases para compatibilidade com código legado */
+  --primary-color: var(--azul);
+  --primary-dark: var(--azul-escuro);
+  --primary-light: #5cbaf7;
+  --primary-soft: #e3f4fe;
+  --secondary-color: var(--laranja);
+  --secondary-hover: var(--laranja-escuro);
+  --accent-gold: var(--laranja);
+  --text-dark: var(--texto);
+  --text-light: var(--texto-suave);
+  --background: var(--fundo);
+  --white: var(--cartao);
+  --border: #e3e3ea;
+  --success: var(--verde);
+  --success-bg: #e8f7df;
+  --error: var(--vermelho-coracao);
+  --error-bg: #ffe3ee;
+  --warning: var(--laranja);
+  --border-radius: 14px;
+  --border-radius-pq: 10px;
+  --shadow-sm: 0 2px 8px rgba(44, 56, 70, 0.06);
+  --shadow-md: 0 8px 24px rgba(2, 151, 243, 0.10);
+  --shadow-lg: 0 16px 40px rgba(44, 56, 70, 0.16);
+  --transition: 0.2s ease;
 }
 
 /* Reset e Base */
@@ -36,10 +54,11 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--background);
@@ -194,20 +213,44 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.4rem;
+  min-height: 44px;
+  padding: 0.7rem 1.3rem;
   border-radius: var(--border-radius);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: var(--transition);
-  border: 2px solid transparent;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  border: none;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.18);
   text-decoration: none;
   font-family: inherit;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.btn:focus-visible {
+  outline: 3px solid rgba(2, 151, 243, 0.45);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-sm {
-  padding: 0.48rem 0.95rem;
-  font-size: 0.86rem;
+  min-height: 36px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  border-bottom-width: 2px;
 }
 
 .btn-block {
@@ -215,23 +258,25 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background-color: var(--azul);
+  color: #fff;
+  border-bottom-color: var(--azul-escuro);
+  box-shadow: 0 4px 14px rgba(2, 151, 243, 0.28);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-1px);
+  background-color: #15a2f8;
 }
 
 .btn-accent {
-  background-color: var(--secondary-color);
-  color: var(--white);
+  background-color: var(--laranja);
+  color: #fff;
+  border-bottom-color: var(--laranja-escuro);
+  box-shadow: 0 4px 14px rgba(255, 163, 16, 0.28);
 }
 
 .btn-accent:hover {
-  background-color: var(--secondary-hover);
-  transform: translateY(-1px);
+  background-color: #ffb033;
 }
 
 .btn-secondary {

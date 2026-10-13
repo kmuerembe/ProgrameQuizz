@@ -1,5 +1,5 @@
 -- ============================================================
--- CódigoMZ / ProgrameMoz - Dados de Demonstração (Seeds)
+-- ProgrameMoz - Dados de Demonstração (Seeds)
 -- Nota: Utiliza ON CONFLICT DO NOTHING para não apagar nem sobrescrever dados existentes.
 -- ============================================================
 

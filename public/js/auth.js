@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * CódigoMZ / ProgrameMoz - Módulo de Autenticação Frontend
+ * ProgrameMoz - Módulo de Autenticação Frontend
  * Gestão de Registo, Login, Logout, Sessão e Validação de Formulários
  * ============================================================
  */
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
           );
           if (btnSubmit) {
             btnSubmit.disabled = false;
-            btnSubmit.textContent = 'Criar Conta no CódigoMZ';
+            btnSubmit.textContent = 'Criar Conta no ProgrameMoz';
           }
           return;
         }
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         if (btnSubmit) {
           btnSubmit.disabled = false;
-          btnSubmit.textContent = 'Criar Conta no CódigoMZ';
+          btnSubmit.textContent = 'Criar Conta no ProgrameMoz';
         }
       }
     });

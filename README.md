@@ -119,11 +119,14 @@ O projeto inclui os seguintes tabelas:
 
 ## 🌐 Endpoints da API
 
-### Utilizadores
-- `GET /` - Teste da API
-- `POST /api/utilizadores` - Registar novo utilizador
-- `POST /api/utilizadores/login` - Login de utilizador
-- `GET /api/utilizadores/:id/progresso` - Obter progresso do utilizador
+### Autenticação e Utilizadores
+- `GET /` / `GET /api/status` - Estado da API (ou Painel Principal no navegador)
+- `POST /api/utilizadores` (ou `POST /api/auth/registo`) - Registar novo utilizador (com hash bcrypt e validação)
+- `POST /api/utilizadores/login` (ou `POST /api/auth/login`) - Iniciar sessão com e-mail e palavra-passe
+- `POST /api/utilizadores/logout` (ou `POST /api/auth/logout`) - Terminar sessão com segurança (invalida token e limpa cookie `HttpOnly`)
+- `GET /api/auth/perfil` (ou `GET /api/utilizadores/perfil`) - Obter perfil, pontuação, progresso por linguagem e histórico do utilizador autenticado
+- `GET /api/utilizadores/:id/progresso` - Obter progresso pessoal do utilizador autenticado (protegido: cada utilizador só acede ao seu próprio ID)
+- `GET /api/utilizadores/:id/historico` - Obter histórico detalhado de tentativas do utilizador autenticado
 
 ### Linguagens
 - `GET /api/linguagens` - Listar todas as linguagens
@@ -134,8 +137,8 @@ O projeto inclui os seguintes tabelas:
 ### Perguntas
 - `GET /api/perguntas/:temaId` - Listar perguntas por tema
 
-### Tentativas
-- `POST /api/tentativas` - Registrar uma tentativa de quiz
+### Tentativas (Protegido)
+- `POST /api/tentativas` - Registar uma tentativa de quiz do utilizador autenticado e atualizar a pontuação (+10 pontos por acerto)
 
 ## 📱 Interface e Experiência do Utilizador
 

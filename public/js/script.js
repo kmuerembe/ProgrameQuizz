@@ -1,34 +1,51 @@
 /**
  * ============================================================
- * ProgrameMoz - Frontend JavaScript
- * Plataforma moçambicana de quizzes para aprendizagem de programação
+ * CódigoMZ / ProgrameMoz - Lógica Principal do Painel e Quizzes
  * ============================================================
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Estado da aplicação
-  let appState = {
+  const appState = {
+    utilizador: null,
     currentLanguage: null,
+    selectedLanguageId: null,
+    perguntas: [],
     currentQuestionIndex: 0,
     totalQuestions: 0,
     correctAnswers: 0,
     userAnswers: [],
-    selectedLanguageId: null
   };
 
-  // Elementos do DOM
   const elements = {
-    // Navigation
-    languageCards: document.querySelectorAll('.linguagem-card'),
+    navbarAuth: document.getElementById('navbar-auth'),
+    heroTitle: document.getElementById('hero-title'),
+    heroSubtitle: document.getElementById('hero-subtitle'),
+    heroButtons: document.getElementById('hero-buttons'),
+
+    // Perfil
+    perfilProtegido: document.getElementById('perfil-protegido'),
+    perfilAutenticado: document.getElementById('perfil-autenticado'),
+    perfilIniciais: document.getElementById('perfil-iniciais'),
+    perfilNome: document.getElementById('perfil-nome'),
+    perfilEmail: document.getElementById('perfil-email'),
+    perfilCurso: document.getElementById('perfil-curso'),
+    perfilNivel: document.getElementById('perfil-nivel'),
+    perfilPontuacao: document.getElementById('perfil-pontuacao'),
+    perfilTentativas: document.getElementById('perfil-tentativas'),
+    perfilAcertos: document.getElementById('perfil-acertos'),
+    perfilPercentual: document.getElementById('perfil-percentual'),
+    perfilLinguagensProgresso: document.getElementById('perfil-linguagens-progresso'),
+    btnLogoutPerfil: document.getElementById('btn-logout-perfil'),
+
+    // Linguagens e Quizz
+    linguagensGrid: document.getElementById('linguagens-grid'),
     quizSection: document.getElementById('perguntas'),
-    progressSection: document.getElementById('progresso'),
-    
-    // Quizz elements
     quizzTitle: document.getElementById('quizz-titulo'),
-    quizzProgress: document.getElementById('quizz-progress'),
     quizzProgressBar: document.getElementById('quizz-progress-bar'),
     quizzCard: document.getElementById('quizz-card'),
     perguntaElement: document.getElementById('quizz-pergunta'),
     opcoesContainer: document.getElementById('quizz-opcoes'),
+    quizzFeedback: document.getElementById('quizz-feedback'),
     btnAnterior: document.getElementById('btn-anterior'),
     btnProxima: document.getElementById('btn-proxima'),
     navIndicator: document.getElementById('nav-indicator'),
@@ -37,439 +54,449 @@ document.addEventListener('DOMContentLoaded', () => {
     resultExplicacao: document.getElementById('result-explicacao'),
     resultPontuacao: document.getElementById('result-pontuacao'),
     btnReiniciar: document.getElementById('btn-reiniciar'),
-    
-    // Progresso elements
-    progressoBody: document.getElementById('progresso-body')
+
+    // Histórico
+    progressoProtegido: document.getElementById('progresso-protegido'),
+    progressoAutenticado: document.getElementById('progresso-autenticado'),
+    progressoBody: document.getElementById('progresso-body'),
   };
 
-  // Inicializar - esconder seções que não são hero
-  function esconderTodasSecoes() {
-    if (elements.quizSection) elements.quizSection.style.display = 'none';
-    if (elements.progressSection) elements.progressSection.style.display = 'none';
+  function obterIniciais(nome) {
+    if (!nome) return 'MZ';
+    const partes = String(nome).trim().split(/\s+/);
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
   }
 
-  // Carregar linguagens da API
+  function escaparHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto == null ? '' : String(texto);
+    return div.innerHTML;
+  }
+
+  // ============================================================
+  // Gestão de Sessão, Perfil e Progresso Pessoal
+  // ============================================================
+  async function carregarPerfilEProgresso() {
+    if (!window.CodigoMZAuth) return;
+
+    const dadosPerfil = await window.CodigoMZAuth.verificarSessaoServidor();
+    appState.utilizador = dadosPerfil;
+
+    if (!dadosPerfil) {
+      renderizarVistaVisitante();
+      return;
+    }
+
+    renderizarVistaAutenticada(dadosPerfil);
+  }
+
+  function renderizarVistaVisitante() {
+    if (elements.navbarAuth) {
+      elements.navbarAuth.innerHTML = `
+        <a href="/login.html" class="btn btn-secondary btn-sm">Entrar</a>
+        <a href="/registo.html" class="btn btn-primary btn-sm">Criar Conta</a>
+      `;
+    }
+
+    if (elements.perfilProtegido) elements.perfilProtegido.style.display = 'block';
+    if (elements.perfilAutenticado) elements.perfilAutenticado.style.display = 'none';
+    if (elements.progressoProtegido) elements.progressoProtegido.style.display = 'block';
+    if (elements.progressoAutenticado) elements.progressoAutenticado.style.display = 'none';
+  }
+
+  function renderizarVistaAutenticada(perfil) {
+    const iniciais = obterIniciais(perfil.nome_completo);
+    const primeiroNome = String(perfil.nome_completo || 'Estudante').split(' ')[0];
+
+    // Atualizar Navbar
+    if (elements.navbarAuth) {
+      elements.navbarAuth.innerHTML = `
+        <a href="#perfil" class="user-pill" title="Ver o meu perfil">
+          <span class="user-avatar-sm">${escaparHtml(iniciais)}</span>
+          <span>${escaparHtml(primeiroNome)}</span>
+          <span class="user-score-badge">${Number(perfil.pontuacao || 0)} pts</span>
+        </a>
+        <button type="button" class="btn btn-danger-outline btn-sm" id="nav-btn-logout">
+          Sair
+        </button>
+      `;
+
+      const navLogout = document.getElementById('nav-btn-logout');
+      if (navLogout) {
+        navLogout.addEventListener('click', () => window.CodigoMZAuth.terminarSessao('/login.html'));
+      }
+    }
+
+    // Atualizar Hero
+    if (elements.heroTitle) {
+      elements.heroTitle.textContent = `Olá, ${primeiroNome}! Bem-vindo ao seu Painel CódigoMZ`;
+    }
+    if (elements.heroButtons) {
+      elements.heroButtons.innerHTML = `
+        <a href="#linguagens" class="btn btn-accent">Praticar Quizzes</a>
+        <a href="#perfil" class="btn btn-outline-light">Ver Meu Perfil (${Number(perfil.pontuacao || 0)} pts)</a>
+      `;
+    }
+
+    // Mostrar Perfil Autenticado
+    if (elements.perfilProtegido) elements.perfilProtegido.style.display = 'none';
+    if (elements.perfilAutenticado) elements.perfilAutenticado.style.display = 'block';
+
+    if (elements.perfilIniciais) elements.perfilIniciais.textContent = iniciais;
+    if (elements.perfilNome) elements.perfilNome.textContent = perfil.nome_completo;
+    if (elements.perfilEmail) elements.perfilEmail.textContent = perfil.email;
+    if (elements.perfilCurso) {
+      const infoCurso = perfil.curso
+        ? `${perfil.curso}${perfil.ano_estudo ? ` (${perfil.ano_estudo}.º Ano)` : ''}`
+        : 'Estudante CódigoMZ';
+      elements.perfilCurso.textContent = infoCurso;
+    }
+    if (elements.perfilNivel) {
+      elements.perfilNivel.textContent = perfil.nivel || 'Estudante Iniciante';
+    }
+
+    if (elements.perfilPontuacao) {
+      elements.perfilPontuacao.textContent = `${Number(perfil.pontuacao || 0)} pts`;
+    }
+    if (elements.perfilTentativas) {
+      elements.perfilTentativas.textContent = Number(perfil.total_tentativas || 0);
+    }
+    if (elements.perfilAcertos) {
+      elements.perfilAcertos.textContent = Number(perfil.acertos || 0);
+    }
+    if (elements.perfilPercentual) {
+      elements.perfilPercentual.textContent = `${Number(perfil.percentual_acertos || 0)}%`;
+    }
+
+    // Renderizar progresso por linguagem
+    if (elements.perfilLinguagensProgresso) {
+      const lista = Array.isArray(perfil.progresso_por_linguagem)
+        ? perfil.progresso_por_linguagem
+        : [];
+      elements.perfilLinguagensProgresso.innerHTML = lista
+        .map((item) => {
+          const perc = Math.min(100, Math.max(0, Number(item.progresso_conclusao || 0)));
+          return `
+            <div class="linguagem-progresso-item">
+              <div class="linguagem-progresso-topo">
+                <span>${escaparHtml(item.linguagem)}</span>
+                <span>${perc}% concluído</span>
+              </div>
+              <div class="linguagem-progresso-barra">
+                <div class="linguagem-progresso-preenchimento" style="width: ${perc}%"></div>
+              </div>
+              <div class="linguagem-progresso-detalhe">
+                <span>${Number(item.acertos || 0)} acertos em ${Number(item.tentativas || 0)} tentativas</span>
+                <span>Taxa: ${Number(item.percentual_acertos || 0)}%</span>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    // Mostrar Histórico Pessoal Autenticado
+    if (elements.progressoProtegido) elements.progressoProtegido.style.display = 'none';
+    if (elements.progressoAutenticado) elements.progressoAutenticado.style.display = 'block';
+
+    if (elements.progressoBody) {
+      const historico = Array.isArray(perfil.historico) ? perfil.historico : [];
+      if (historico.length === 0) {
+        elements.progressoBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">
+              Ainda não realizou nenhuma tentativa de quizz. Escolha uma linguagem acima para começar!
+            </td>
+          </tr>
+        `;
+      } else {
+        elements.progressoBody.innerHTML = historico
+          .map((h) => {
+            const dataFormatada = h.criado_em
+              ? new Date(h.criado_em).toLocaleString('pt-PT', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : 'Recente';
+            return `
+              <tr>
+                <td><strong>${escaparHtml(h.linguagem)}</strong></td>
+                <td>${escaparHtml(h.tema)}</td>
+                <td>${escaparHtml(h.enunciado)}</td>
+                <td>
+                  <span class="status-pill ${h.correta ? 'correta' : 'incorreta'}">
+                    ${h.correta ? '✓ Correta (+10 pts)' : '✗ Incorreta'}
+                  </span>
+                </td>
+                <td>${escaparHtml(dataFormatada)}</td>
+              </tr>
+            `;
+          })
+          .join('');
+      }
+    }
+  }
+
+  if (elements.btnLogoutPerfil) {
+    elements.btnLogoutPerfil.addEventListener('click', () => {
+      if (window.CodigoMZAuth) {
+        window.CodigoMZAuth.terminarSessao('/login.html');
+      }
+    });
+  }
+
+  // ============================================================
+  // Carregamento de Linguagens e Quizzes
+  // ============================================================
   async function carregarLinguagens() {
     try {
       const response = await fetch('/api/linguagens');
       if (!response.ok) throw new Error('Erro ao carregar linguagens');
       const linguagens = await response.json();
-      
-      // Renderizar linguagens
-      const grid = document.querySelector('.linguagens-grid');
-      if (!grid) return;
-      
-      grid.innerHTML = '';
-      
-      linguagens.forEach((linguagem, index) => {
+
+      if (!elements.linguagensGrid) return;
+      elements.linguagensGrid.innerHTML = '';
+
+      linguagens.forEach((linguagem) => {
         const card = document.createElement('div');
         card.className = 'linguagem-card';
         card.dataset.id = linguagem.id;
         card.innerHTML = `
           <div class="linguagem-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
             </svg>
           </div>
-          <h3 class="linguagem-nome">${linguagem.nome_moçambique || linguagem.nome}</h3>
-          <p class="linguagem-descricao">${linguagem.descricao || 'Linguagem de programação'}</p>
+          <h3 class="linguagem-nome">${escaparHtml(linguagem.nome_moçambique || linguagem.nome)}</h3>
+          <p class="linguagem-descricao">${escaparHtml(linguagem.descricao || 'Pratique conceitos fundamentais desta linguagem.')}</p>
         `;
-        
-        // Evento de clique
+
         card.addEventListener('click', () => selecionarLinguagem(linguagem));
-        
-        grid.appendChild(card);
+        elements.linguagensGrid.appendChild(card);
       });
-      
-      // Marcar primeira linguagem como selecionada se houver
-      if (linguagens.length > 0 && elements.languageCards.length > 0) {
-        elements.languageCards[0].classList.add('ligado');
-        appState.selectedLanguageId = linguagens[0].id;
-      }
-      
     } catch (error) {
       console.error('Erro ao carregar linguagens:', error);
-      // Fallback para dados locais se a API falhar
-      renderLinguagensFallback();
     }
   }
 
-  // Renderizar linguagens como fallback
-  function renderLinguagensFallback() {
-    const linguagens = [
-      { id: 1, nome: 'Java', nome_moçambique: 'Java', descricao: 'Linguagem orientada a objetos' },
-      { id: 2, nome: 'C++', nome_moçambique: 'C++', descricao: 'Linguagem de alto desempenho' },
-      { id: 3, nome: 'Python', nome_moçambique: 'Python', descricao: 'Linguagem fácil de aprender' },
-      { id: 4, nome: 'SQL', nome_moçambique: 'SQL', descricao: 'Linguagem para bases de dados' },
-      { id: 5, nome: 'Lógica', nome_moçambique: 'Lógica de Programação', descricao: 'Fundamentos de raciocínio' }
-    ];
-    
-    const grid = document.querySelector('.linguagens-grid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    
-    linguagens.forEach((linguagem) => {
-      const card = document.createElement('div');
-      card.className = 'linguagem-card';
-      card.dataset.id = linguagem.id;
-      card.innerHTML = `
-        <div class="linguagem-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-        </div>
-        <h3 class="linguagem-nome">${linguagem.nome_moçambique}</h3>
-        <p class="linguagem-descricao">${linguagem.descricao}</p>
-      `;
-      
-      card.addEventListener('click', () => selecionarLinguagem(linguagem));
-      grid.appendChild(card);
+  async function selecionarLinguagem(linguagem) {
+    document.querySelectorAll('.linguagem-card').forEach((card) => {
+      card.classList.toggle('ligado', Number(card.dataset.id) === Number(linguagem.id));
     });
-  }
 
-  // Selecionar linguagem
-  function selecionarLinguagem(linguagem) {
-    // Remover seleção anterior
-    elements.languageCards.forEach(card => card.classList.remove('ligado'));
-    
-    // Selecionar nova
-    const selectedCard = document.querySelector(`.linguagem-card[data-id="${linguagem.id}"]`);
-    if (selectedCard) {
-      selectedCard.classList.add('ligado');
-    }
-    
     appState.selectedLanguageId = linguagem.id;
-    appState.currentLanguage = linguagem.nome;
-    
-    // Carregar temas e perguntas
-    carregarTemasELinguagem(linguagem.id);
-  }
+    appState.currentLanguage = linguagem.nome_moçambique || linguagem.nome;
 
-  // Carregar temas e perguntas
-  async function carregarTemasELinguagem(linguagemId) {
     try {
-      // Carregar temas
-      const temasResponse = await fetch(`/api/temas/${linguagemId}`);
+      const temasResponse = await fetch(`/api/temas/${linguagem.id}`);
       if (!temasResponse.ok) throw new Error('Erro ao carregar temas');
       const temas = await temasResponse.json();
-      
-      if (temas.length === 0) {
-        alert('Nenhum tema encontrado para esta linguagem');
-        return;
-      }
-      
-      // Carregar perguntas do primeiro tema
-      carregarPerguntasPorTema(temas[0].id);
-      
+
+      if (temas.length === 0) return;
+      await carregarPerguntasPorTema(temas[0].id);
     } catch (error) {
       console.error('Erro ao carregar temas:', error);
     }
   }
 
-  // Carregar perguntas por tema
   async function carregarPerguntasPorTema(temaId) {
     try {
       const response = await fetch(`/api/perguntas/${temaId}`);
       if (!response.ok) throw new Error('Erro ao carregar perguntas');
       const perguntas = await response.json();
-      
+
+      appState.perguntas = perguntas;
       appState.totalQuestions = perguntas.length;
-      appState.userAnswers = new Array(perguntas.length).fill(null);
-      
-      if (perguntas.length === 0) {
-        alert('Nenhuma pergunta encontrada para este tema');
-        return;
-      }
-      
-      // Renderizar primeira pergunta
       appState.currentQuestionIndex = 0;
-      renderizarPergunta(perguntas[0], 0);
-      
-      // Mostrar seção do quizz
-      if (elements.quizSection) elements.quizSection.style.display = 'block';
+      appState.correctAnswers = 0;
+      appState.userAnswers = new Array(perguntas.length).fill(null);
+
+      if (perguntas.length === 0) return;
+
+      if (elements.quizzResult) elements.quizzResult.style.display = 'none';
       if (elements.quizzCard) elements.quizzCard.style.display = 'block';
-      
+
+      renderizarPerguntaAtual();
+      if (elements.quizSection) {
+        elements.quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     } catch (error) {
       console.error('Erro ao carregar perguntas:', error);
     }
   }
 
-  // Renderizar pergunta atual
-  function renderizarPergunta(pergunta, indice) {
-    if (!elements.perguntaElement || !elements.opcoesContainer) return;
-    
-    // Atualizar título
-    elements.quizzTitle.textContent = `ProgrameMoz - ${appState.currentLanguage} - ${pergunta.dificuldade}`;
-    
-    // Renderizar pergunta
-    elements.perguntaElement.innerHTML = `
-      <strong>${indice + 1}. ${pergunta.enunciado}</strong>
-    `;
-    
-    // Renderizar opções
+  function renderizarPerguntaAtual() {
+    const indice = appState.currentQuestionIndex;
+    const pergunta = appState.perguntas[indice];
+    if (!pergunta || !elements.perguntaElement || !elements.opcoesContainer) return;
+
+    elements.quizzTitle.textContent = `Quizz de ${appState.currentLanguage} • Nível ${pergunta.dificuldade || 'Médio'}`;
+
+    const progressoPerc = Math.round(((indice + 1) / appState.totalQuestions) * 100);
+    if (elements.quizzProgressBar) {
+      elements.quizzProgressBar.style.width = `${progressoPerc}%`;
+    }
+
+    elements.perguntaElement.innerHTML = `<strong>${indice + 1}. ${escaparHtml(pergunta.enunciado)}</strong>`;
     elements.opcoesContainer.innerHTML = '';
-    
+
+    if (elements.quizzFeedback) {
+      elements.quizzFeedback.className = 'quizz-feedback';
+      elements.quizzFeedback.innerHTML = '';
+    }
+
     const opcoes = [pergunta.opcao_a, pergunta.opcao_b, pergunta.opcao_c, pergunta.opcao_d];
-    
+    const respostaGuardada = appState.userAnswers[indice];
+
     opcoes.forEach((opcao, i) => {
+      const numeroOpcao = i + 1;
       const opcaoElement = document.createElement('div');
       opcaoElement.className = 'quizz-opcao';
-      opcaoElement.dataset.resposta = i + 1; // 1-4
+      opcaoElement.dataset.resposta = numeroOpcao;
       opcaoElement.innerHTML = `
-        <span class="opcao-numero">${i + 1}</span>
-        <span class="opcao-texto">${opcao}</span>
+        <span class="opcao-numero">${numeroOpcao}</span>
+        <span class="opcao-texto">${escaparHtml(opcao)}</span>
       `;
-      
-      // Verificar se já foi respondida
-      if (appState.userAnswers[indice] !== null) {
-        if (appState.userAnswers[indice] === i + 1) {
-          opcaoElement.classList.add('selecionada');
+
+      if (respostaGuardada !== null) {
+        if (numeroOpcao === Number(pergunta.correta)) {
+          opcaoElement.classList.add('correta');
+        } else if (numeroOpcao === respostaGuardada.escolha && !respostaGuardada.correta) {
+          opcaoElement.classList.add('incorreta');
         }
+      } else {
+        opcaoElement.addEventListener('click', () =>
+          responderPergunta(indice, numeroOpcao, pergunta)
+        );
       }
-      
-      opcaoElement.addEventListener('click', () => selecionarOpcao(indice, i + 1, opcaoElement));
+
       elements.opcoesContainer.appendChild(opcaoElement);
     });
-    
-    // Atualizar indicador de progresso
-    if (elements.navIndicator) {
-      elements.navIndicator.textContent = `${indice + 1} de ${appState.totalQuestions}`;
+
+    if (respostaGuardada && elements.quizzFeedback) {
+      elements.quizzFeedback.className = `quizz-feedback ${respostaGuardada.correta ? 'sucesso' : 'erro'}`;
+      elements.quizzFeedback.innerHTML = `
+        <strong>${respostaGuardada.correta ? '✓ Resposta Correta!' : '✗ Resposta Incorreta.'}</strong>
+        ${pergunta.explicacao ? `<br>${escaparHtml(pergunta.explicacao)}` : ''}
+      `;
     }
-    
-    // Controlar botões
+
+    if (elements.navIndicator) {
+      elements.navIndicator.textContent = `Pergunta ${indice + 1} de ${appState.totalQuestions}`;
+    }
     if (elements.btnAnterior) {
       elements.btnAnterior.disabled = indice === 0;
     }
     if (elements.btnProxima) {
-      elements.btnProxima.textContent = indice < appState.totalQuestions - 1 ? 'Próxima' : 'Finalizar';
+      elements.btnProxima.textContent =
+        indice < appState.totalQuestions - 1 ? 'Próxima Pergunta' : 'Ver Resultado Final';
     }
   }
 
-  // Selecionar opção
-  function selecionarOpcao(indice, numeroResposta, elemento) {
-    // Atualizar estado
-    appState.userAnswers[indice] = numeroResposta;
-    
-    // Atualizar todas as opções
-    elements.opcoesContainer.querySelectorAll('.quizz-opcao').forEach((opt, i) => {
-      if (i === indice) {
-        opt.classList.add('selecionada');
-      } else {
-        opt.classList.remove('selecionada');
-      }
-    });
-    
-    // Mostrar resultado imediatamente
-    const perguntaId = elements.opcoesContainer.dataset.perguntaId 
-      ? parseInt(elements.opcoesContainer.dataset.perguntaId) 
-      : null;
-    
-    verificarResposta(indice, numeroResposta);
-  }
+  async function responderPergunta(indice, numeroResposta, pergunta) {
+    if (appState.userAnswers[indice] !== null) return;
 
-  // Verificar resposta
-  async function verificarResposta(indice, numeroResposta) {
-    const perguntaId = parseInt(
-      elements.opcoesContainer.dataset?.perguntaId || 
-      Object.keys({...}).find().toString()
-    ) || indice + 1;
-    
-    try {
-      // Buscar a pergunta correta na API
-      const response = await fetch(`/api/perguntas/${perguntaId}`);
-      if (!response.ok) throw new Error('Erro ao verificar resposta');
-      const pergunta = await response.json();
-      
-      const correta = pergunta.correta === numeroResposta;
-      
-      // Feedback visual
-      elements.opcoesContainer.querySelectorAll('.quizz-opcao').forEach((opt, i) => {
-        const isCorrect = (parseInt(opt.dataset.resposta) === pergunta.correta);
-        
-        if (isCorrect) {
-          opt.style.background = 'var(--success)';
-          opt.style.color = 'var(--white)';
-        } else if (parseInt(opt.dataset.resposta) === numeroResposta && !correta) {
-          opt.style.background = 'var(--error)';
-          opt.style.color = 'var(--white)';
+    const corretaLocal = Number(pergunta.correta) === numeroResposta;
+    appState.userAnswers[indice] = { escolha: numeroResposta, correta: corretaLocal };
+    if (corretaLocal) {
+      appState.correctAnswers++;
+    }
+
+    // Se o utilizador estiver autenticado, guarda a tentativa e atualiza a pontuação na BD
+    if (appState.utilizador && window.CodigoMZAuth) {
+      try {
+        const response = await fetch('/api/tentativas', {
+          method: 'POST',
+          headers: window.CodigoMZAuth.obterCabecalhos(),
+          credentials: 'include',
+          body: JSON.stringify({
+            pergunta_id: pergunta.id,
+            resposta_usuario: numeroResposta,
+            tempo_segundos: 10,
+          }),
+        });
+
+        if (response.ok) {
+          await carregarPerfilEProgresso();
         }
-      });
-      
-      // Atualizar pontuação
-      if (correta) {
-        appState.correctAnswers++;
-        if (elements.resultTitulo) {
-          elements.resultTitulo.textContent = 'Resposta Correta!';
-          elements.resultTitulo.style.color = 'var(--success)';
-        }
-      } else {
-        if (elements.resultTitulo) {
-          elements.resultTitulo.textContent = 'Resposta Incorreta';
-          elements.resultTitulo.style.color = 'var(--error)';
-        }
-      }
-      
-      // Mostrar explicação
-      if (elements.resultExplicacao && pergunta.explicacao) {
-        elements.resultExplicacao.textContent = `Explicação: ${pergunta.explicacao}`;
-      }
-      
-      // Mostrar tela de resultado
-      if (elements.quizzResult) {
-        elements.quizzResult.style.display = 'block';
-        elements.quizzCard.style.display = 'none';
-      }
-      
-    } catch (error) {
-      console.error('Erro ao verificar resposta:', error);
-      
-      // Feedback simples sem API
-      elements.opcoesContainer.querySelectorAll('.quizz-opcao').forEach((opt, i) => {
-        if (parseInt(opt.dataset.resposta) === numeroResposta) {
-          opt.classList.add('selecionada');
-          if (i + 1 === parseInt(pergunta.correta || '1')) {
-            opt.style.background = 'var(--success)';
-            opt.style.color = 'var(--white)';
-          }
-        }
-      });
-      
-      if (elements.resultExplicacao) {
-        elements.resultExplicacao.textContent = 'Explicação: Revise os conceitos da linguagem selecionada.';
-      }
-      if (elements.quizzResult) {
-        elements.quizzResult.style.display = 'block';
-        elements.quizzCard.style.display = 'none';
+      } catch (err) {
+        console.error('Erro ao registar tentativa:', err);
       }
     }
-  }
 
-  // Navegar entre perguntas
-  function proximaPergunta() {
-    if (appState.currentQuestionIndex < appState.totalQuestions - 1) {
-      appState.currentQuestionIndex++;
-      // Recarregar pergunta - precisamos guardar a pergunta atual
-      // Isso requer manter referência às perguntas
-      console.log('Próxima pergunta');
-    } else {
-      finalizarQuizz();
-    }
-  }
+    renderizarPerguntaAtual();
 
-  function anteriorPergunta() {
-    if (appState.currentQuestionIndex > 0) {
-      appState.currentQuestionIndex--;
-      renderizarPergunta(/* pergunta */ {}, appState.currentQuestionIndex);
-    }
-  }
-
-  // Finalizar quizz
-  function finalizarQuizz() {
-    const percentual = (appState.correctAnswers / appState.totalQuestions * 100).toFixed(1);
-    
-    if (elements.quizzResult) {
-      elements.quizzResult.innerHTML = `
-        <div class="result-icon correto" style="color: var(--success);"></div>
-        <h3 class="result-title">Parabéns!</h3>
-        <p class="result-explanation">Você acertou ${appState.correctAnswers} de ${appState.totalQuestions} perguntas</p>
-        <p class="result-score">${percentual}% de acertos</p>
-        <button type="button" class="btn btn-primary" id="btn-reiniciar-quizz">Reiniciar</button>
+    if (!appState.utilizador && elements.quizzFeedback) {
+      elements.quizzFeedback.innerHTML += `
+        <div style="margin-top: 0.5rem; font-size: 0.86rem;">
+          💡 <a href="/login.html" style="font-weight: 700; color: inherit;">Inicie sessão</a> para guardar os seus pontos e histórico no seu perfil pessoal.
+        </div>
       `;
-      
-      // Adicionar event listener ao botão de reiniciar
-      const btnReiniciar = document.getElementById('btn-reiniciar-quizz');
-      if (btnReiniciar) {
-        btnReiniciar.addEventListener('click', () => reiniciarQuizz());
-      }
     }
-    
-    // Mostrar seção de resultado e esconder quizz
-    if (elements.quizzResult) elements.quizzResult.style.display = 'block';
+  }
+
+  function finalizarQuizz() {
+    const percentual =
+      appState.totalQuestions > 0
+        ? Math.round((appState.correctAnswers / appState.totalQuestions) * 100)
+        : 0;
+
     if (elements.quizzCard) elements.quizzCard.style.display = 'none';
+    if (elements.quizzResult) {
+      elements.quizzResult.style.display = 'block';
+    }
+    if (elements.resultTitulo) {
+      elements.resultTitulo.textContent =
+        percentual >= 60 ? 'Excelente Trabalho! 🎉' : 'Quizz Concluído! Continue a Praticar 💪';
+    }
+    if (elements.resultExplicacao) {
+      elements.resultExplicacao.textContent = `Acertou ${appState.correctAnswers} de ${appState.totalQuestions} perguntas no quizz de ${appState.currentLanguage}.`;
+    }
+    if (elements.resultPontuacao) {
+      elements.resultPontuacao.textContent = `Aproveitamento: ${percentual}%`;
+    }
   }
 
   function reiniciarQuizz() {
     appState.currentQuestionIndex = 0;
     appState.correctAnswers = 0;
-    appState.userAnswers = [];
-    
-    // Esconder resultado, mostrar card
+    appState.userAnswers = new Array(appState.totalQuestions).fill(null);
+
     if (elements.quizzResult) elements.quizzResult.style.display = 'none';
     if (elements.quizzCard) elements.quizzCard.style.display = 'block';
-    
-    // Recarregar primeira pergunta - precisamos salvar as perguntas
-    console.log('Reiniciando quizz...');
+    renderizarPerguntaAtual();
   }
 
-  // Carregar progresso do utilizador
-  async function carregarProgressoUtilizador(userId = 1) {
-    try {
-      const response = await fetch(`/api/utilizadores/${userId}/progresso`);
-      if (!response.ok) throw new Error('Erro ao carregar progresso');
-      const progresso = await response.json();
-      
-      if (elements.progressoBody) {
-        elements.progressoBody.innerHTML = '';
-        
-        // Se não houver dados, mostrar mensagem
-        if (!progresso || (progresso.total_tentativas === 0 && progresso.percentual_acertos === undefined)) {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-light);">Sem dados de progresso ainda. Complete alguns quizzes para ver seu progresso!</td>`;
-          elements.progressoBody.appendChild(row);
-          return;
-        }
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${progresso.nome_completo || 'Utilizador'}</td>
-          <td>${progresso.curso || 'Não informado'}</td>
-          <td>${progresso.total_tentativas || 0}</td>
-          <td>${progresso.acertos || 0}</td>
-          <td>${progresso.percentual_acertos || 0}%</td>
-          <td>${progresso.ultima_tentativa ? new Date(progresso.ultima_tentativa).toLocaleDateString('pt-PT') : 'N/A'}</td>
-        `;
-        elements.progressoBody.appendChild(row);
-      }
-      
-    } catch (error) {
-      console.error('Erro ao carregar progresso:', error);
-      if (elements.progressoBody) {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-light);">Erro ao carregar progresso.</td>`;
-        elements.progressoBody.appendChild(row);
-      }
-    }
-  }
-
-  // Event Listeners
   if (elements.btnProxima) {
     elements.btnProxima.addEventListener('click', () => {
       if (appState.currentQuestionIndex < appState.totalQuestions - 1) {
         appState.currentQuestionIndex++;
-        // Aqui seria necessário recarregar a pergunta seguinte
-        // Para simplificar, vamos apenas avançar
-        if (elements.quizzCard) elements.quizzCard.style.display = 'block';
-        if (elements.quizzResult) elements.quizzResult.style.display = 'none';
+        renderizarPerguntaAtual();
       } else {
         finalizarQuizz();
       }
     });
   }
-  
+
   if (elements.btnAnterior) {
-    elements.btnAnterior.addEventListener('click', anteriorPergunta);
+    elements.btnAnterior.addEventListener('click', () => {
+      if (appState.currentQuestionIndex > 0) {
+        appState.currentQuestionIndex--;
+        renderizarPerguntaAtual();
+      }
+    });
   }
-  
+
   if (elements.btnReiniciar) {
     elements.btnReiniciar.addEventListener('click', reiniciarQuizz);
   }
 
-  // Inicialização
+  // Inicializar Aplicação
+  carregarPerfilEProgresso();
   carregarLinguagens();
-  carregarProgressoUtilizador();
 });

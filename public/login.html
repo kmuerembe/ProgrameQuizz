@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sessão | CódigoMZ - ProgrameMoz</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Muli:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+  <!-- Barra de Navegação -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/index.html" class="navbar-logo">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="currentColor">
+          <path d="M16 2L2 8h28L16 2ZM16 8L4 14h24L16 8ZM16 14L6 20h20L16 14ZM16 20L8 26h16L16 20Z"/>
+        </svg>
+        <span>CódigoMZ</span>
+        <span class="brand-badge">ProgrameMoz</span>
+      </a>
+      <div class="navbar-links">
+        <a href="/index.html">Painel Principal</a>
+        <a href="/index.html#linguagens">Linguagens</a>
+        <a href="/registo.html">Criar Conta</a>
+      </div>
+      <div class="navbar-auth">
+        <a href="/registo.html" class="btn btn-primary btn-sm">Registar-se</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo Principal de Login -->
+  <main class="auth-wrapper">
+    <div class="auth-container">
+      <!-- Painel Institucional CódigoMZ -->
+      <aside class="auth-aside">
+        <div>
+          <span class="auth-aside-badge">🇲🇿 Plataforma Moçambicana de Programação</span>
+          <h2>Bem-vindo de volta ao CódigoMZ</h2>
+          <p>
+            Aceda à sua conta para praticar algoritmos, responder aos quizzes das principais universidades de Moçambique e acompanhar a sua evolução.
+          </p>
+          <ul class="auth-benefits">
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Quizzes interativos de Java, Python, C++, SQL e Lógica de Programação.</span>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Perfil pessoal com pontuação acumulada e estatísticas por linguagem.</span>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <span>Histórico privado e seguro das suas tentativas e respostas.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="auth-aside-footer">
+          CódigoMZ • Educação Tecnológica em Moçambique
+        </div>
+      </aside>
+
+      <!-- Formulário de Login -->
+      <section class="auth-panel" aria-labelledby="login-heading">
+        <div class="auth-header">
+          <h1 id="login-heading">Iniciar Sessão</h1>
+          <p>Introduza o seu endereço de e-mail e a sua palavra-passe para entrar no painel principal.</p>
+        </div>
+
+        <!-- Alerta de Feedback (Erro / Sucesso) -->
+        <div id="login-alert" class="auth-alert" role="alert" aria-live="polite"></div>
+
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="login-email" class="form-label">Endereço de E-mail</label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                class="form-control"
+                placeholder="ex: estudante@uem.mz"
+                autocomplete="email"
+                required
+              >
+            </div>
+            <span id="erro-login-email" class="field-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" class="form-label">Palavra-passe</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                class="form-control"
+                placeholder="Introduza a sua palavra-passe"
+                autocomplete="current-password"
+                required
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                data-toggle-password="login-password"
+                aria-label="Mostrar ou ocultar palavra-passe"
+              >
+                Mostrar
+              </button>
+            </div>
+            <span id="erro-login-password" class="field-error"></span>
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block">
+            Entrar na Conta
+          </button>
+        </form>
+
+        <!-- Auxiliar para Conta de Demonstração -->
+        <div class="demo-box">
+          <span><strong>Conta de teste:</strong> amelia.mondlane@uem.mz</span>
+          <button type="button" id="btn-preencher-demo" class="btn-demo">
+            Preencher dados de teste
+          </button>
+        </div>
+
+        <div class="auth-switch">
+          Ainda não tem uma conta no CódigoMZ?
+          <a href="/registo.html">Criar conta gratuita</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 # ----------------------
 # Dependências node_modules
 node_modules/
+package-lock.json
 
 # Environment variables
 .env
@@ -9,8 +10,9 @@ node_modules/
 # Logs
 *.log
 
-# Database dump
+# Database dump (exceto scripts de esquema e seed em sql/)
 *.sql
+!sql/*.sql
 
 # Build artifacts
 dist/
